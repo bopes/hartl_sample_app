@@ -187,6 +187,7 @@ input {
   margin-left: 0;
 }
 
+
 /* miscellaneous */
 
 .debug_dump {
@@ -195,4 +196,17 @@ input {
   width: 100%;
   margin-top: 45px;
   @include box_sizing;
+}
+
+
+/* Users index */
+
+.users {
+  list-style: none;
+  margin: 0;
+  li {
+    overflow: auto;
+    padding: 10px 0;
+    border-bottom: 1px solid $gray-lighter;
+  }
 }
