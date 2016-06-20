@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
 
-  has_many :microposts
+  has_many :microposts, dependent: :destroy
 
   attr_accessor :remember_token, :activation_token, :reset_token
 
