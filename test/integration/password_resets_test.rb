@@ -30,11 +30,11 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
     get edit_password_reset_path(user.reset_token, email: user.email)
     assert_template 'password_resets/edit'
     assert_select "input[name=email][type=hidden][value=?]", user.email
-    patch password_reset_path(user.reset.token),
+    patch password_reset_path(user.reset_token),
           email: user.email,
           user: { password: 'foobaz',
                   password_confirmation: 'barquux' }
-    assert_select 'div#error_explanantion'
+    assert_select 'div#error_explanation'
     patch password_reset_path(user.reset_token),
           email: user.email,
           user: { password: '',
@@ -45,6 +45,20 @@ class PasswordResetsTest < ActionDispatch::IntegrationTest
                   password_confirmation: 'foobaz' }
     assert is_logged_in?
     assert_redirected_to user
+  end
+
+  test 'expired token' do
+    get new_password_reset_path
+    post password_resets_path, password_reset: { email: @user.email }
+    @user = assigns(:user)
+    @user.update_attribute(:reset_sent_at, 3.hours.ago)
+    patch password_reset_path(@user.reset_token),
+          email: @user.email,
+          user: { password: 'foobar',
+                  password_confirmation: 'foobar' }
+    assert_response :redirect
+    follow_redirect!
+    assert_match 'expired', response.body
   end
 
 end
